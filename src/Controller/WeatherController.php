@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\HttpFoundation\Request;
 use App\Service\WeatherService;
 
 class WeatherController extends AbstractController
@@ -14,26 +15,29 @@ class WeatherController extends AbstractController
     {
         $this->weatherService = $weather;
     }
-
+    
     /**
      * @Route("/", name="index")
      */
     public function index()
     {
-        return $this->render('weather/index.html.twig', array(
-            // ...
-        ));
-    }
+        $request = Request::createFromGlobals();
+        $request->getPathInfo();
+        $lat= $request->request->get('lat1');
+        $lon= $request->request->get('lon0');
+        $city= $request->request->get('city');
     
-    /**
-     * @Route("/meteo", name="meteo")
-     */
-    public function meteo()
-    {
-        $apiResponse = $this->weatherService->getWeather();
+        if ($lat && $lon && $city){
+            $meteoApiResponse = $this->weatherService->getWeather($lat,$lon);
+        } else{
+            $meteoApiResponse = $this->weatherService->getWeather();
+            $city = "Toulouse";
+        }
         
-        return $this->render('weather/meteo.html.twig', array(
-            "meteo"=> $apiResponse
+        
+        return $this->render('weather/weather.html.twig', array(
+            "meteo"=> $meteoApiResponse,
+            "city"=> $city
         ));
     }
 }

@@ -1,0 +1,73 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+    Meteo
+{% endblock %}
+
+{% block stylesheets %}
+    <link href="{{ asset('css/meteo.css') }}" type="text/css" rel="stylesheet" />
+{% endblock %}
+
+{% block body %}
+    <div id="searchDiv">
+        <p id="searchText">Voir la météo à :</p>
+        <form action="/" method="post" class="autocomplete">
+            <input id="searchInput" type="text" placeholder="ex : Toulouse, Bordeaux, ..." autocomplete="off">
+            <input id="searchButton" type="submit" value="Rechercher">
+            <input id="searchButtonShort" type="submit" value=" ">
+            <input type="hidden" id="lat1" name="lat1">
+            <input type="hidden" id="lon0" name="lon0">
+            <input type="hidden" id="city" name="city">
+        </form>
+    </div>
+    <div id="centeredMeteo">
+        <h1>Aujourd'hui à {{ city }}</h1>
+        <div id="centeredMeteoFull">
+            <div id="centeredLogoAndTemperature">
+                <img src="{{ asset('img/cloud.png') }}" alt="cloud picture">
+                <p id="centeredLogoAndTemperatureText">{{ meteo['currently']['temperature']|round }}°C</p>
+            </div>
+            <div id="cenderedWindAndPrecipitation">
+                <div>
+                    <p>{{ meteo['currently']['windSpeed']|round }} km/h</p>
+                    <img class="centerdWindAndPrecipitationLogos" src="{{ asset('img/wind.png') }}" alt="Wind logo" title="Vitesse du vent">
+                </div>
+                <div>
+                    <p>{{ meteo['currently']['precipProbability']*100 }} %</p>
+                    <img class="centerdWindAndPrecipitationLogos" src="{{ asset('img/rain.png') }}" alt="rain logo" title="Taux de précipitation">
+                </div>
+            </div>
+        </div>
+        <p id="centeredText">{{ meteo['currently']['summary'] }}</p>
+        </div>
+    <table id="dataTable">
+        <tr class="dataTableRow">
+            <th class="dataTableRowCollumn0"></th>
+            {% for hour in range(3,21,3) %}
+                <th class="dataTableRowCollumn">{{ meteo['hourly']['data'][hour]['time']|date( 'G') }}h</th>
+            {% endfor %}
+            
+        </tr>
+        <tr class="dataTableRow">
+            <th class="dataTableRowCollumn0"><img src="{{ asset('img/thermometter.png') }}" alt="thermometer logo" title="Température" class="dataTableRowLogos"></th>
+            {% for hour in range(3,21,3) %}
+                <th class="dataTableRowCollumn nonBoldTh">{{ meteo['hourly']['data'][hour]['temperature']|round }}</th>
+            {% endfor %}
+            <th class="dataTableRowCollumnLast">°C</th>
+        </tr>
+        <tr class="dataTableRow">
+            <th class="dataTableRowCollumn0"><img src="{{ asset('img/rain.png') }}" alt="rain logo" title="Taux de précipitation" class="dataTableRowLogos"></th>
+            {% for hour in range(3,21,3) %}
+                <th class="dataTableRowCollumn nonBoldTh">{{ meteo['hourly']['data'][hour]['precipProbability']*100 }}</th>
+            {% endfor %}
+            <th class="dataTableRowCollumnLast">%</th>
+        </tr>
+    </table>
+{% endblock %}
+
+{% block javascripts %}
+    <script type="text/javascript" src="{{ asset('js/ajax.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('js/autocomplete.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('js/meteo.js') }}"></script>
+{% endblock %}
+

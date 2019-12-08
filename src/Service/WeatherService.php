@@ -18,10 +18,10 @@ class WeatherService
     /**
      * @return array
      */
-    public function getWeather()
+    public function getWeather($lat = 43.6047, $lon = 1.4442)
     {
-        $response = $this->client->request('GET', 'https://api.darksky.net/forecast/' . $this->apiKey . '/37.8267,-122.4233');
-
+        $response = $this->client->request('GET', 'https://api.darksky.net/forecast/' . $this->apiKey . '/'. $lat.','. $lon.'?units=si&exclude=[minutely].[daily].[alerts].[flags]&lang=fr');
+        
         $meteoArray=$response->toArray() ;
         
         return $meteoArray;
